@@ -9,10 +9,10 @@ Despite the description "server to server", there is always one party initaiting
 Thus, this repository contains two programs, the client app and the server app. First start the server app ``SpringBootWsServerApplication`` and then
 the client app ``SpringBootWsClientApplication`` and observe the programs output. Make sure, both use different HTTP server ports, when running locally:
 
-``de.twiechert.springws.server.SpringBootWsServerApplication --server.port=9000``
+``java de.twiechert.springws.server.SpringBootWsServerApplication --server.port=9000``
 
 
-``de.twiechert.springws.server.SpringBootWsClientApplication --server.port=9001``
+``java de.twiechert.springws.server.SpringBootWsClientApplication --server.port=9001``
 
 
 
