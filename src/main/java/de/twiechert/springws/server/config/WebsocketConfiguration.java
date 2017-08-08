@@ -6,6 +6,9 @@ import org.springframework.web.socket.config.annotation.AbstractWebSocketMessage
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
+import static de.twiechert.springws.server.controller.MessageController.SAMPLE_ENDPOINT_MESSAGE_MAPPING;
+import static de.twiechert.springws.server.controller.MessageController.SAMPLE_ENDPOINT_WITHOUT_RESPONSE_MESSAGE_MAPPING;
+
 /**
  * @author Tayfun Wiechert <wiechert@campus.tu-berlin.de>
  */
@@ -33,7 +36,11 @@ public class WebsocketConfiguration extends AbstractWebSocketMessageBrokerConfig
         /*
         Here we register the single endpoints
          */
-        registry.addEndpoint("/sampleEndpoint")
+        registry.addEndpoint(SAMPLE_ENDPOINT_MESSAGE_MAPPING)
+                .setAllowedOrigins("*")
+                .withSockJS();
+
+        registry.addEndpoint(SAMPLE_ENDPOINT_WITHOUT_RESPONSE_MESSAGE_MAPPING)
                 .setAllowedOrigins("*")
                 .withSockJS();
     }

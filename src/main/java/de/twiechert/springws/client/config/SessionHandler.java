@@ -16,8 +16,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Type;
 
 import static de.twiechert.springws.server.config.WebsocketConfiguration.WS_ENDPOINT_PREFIX;
-import static de.twiechert.springws.server.controller.MessageController.SAMPLE_ENDPOINT_MESSAGE_MAPPING;
-import static de.twiechert.springws.server.controller.MessageController.WS_TOPIC;
+import static de.twiechert.springws.server.controller.MessageController.*;
 
 /**
  * @author Tayfun Wiechert <wiechert@campus.tu-berlin.de>
@@ -29,7 +28,7 @@ public class SessionHandler extends StompSessionHandlerAdapter {
     private static final int messageToSend = 12;
 
     @Autowired
-    private FactoryBean<RequestMessage> requestMessageFactoryBean;
+    protected FactoryBean<RequestMessage> requestMessageFactoryBean;
 
 
     @Override
@@ -38,13 +37,17 @@ public class SessionHandler extends StompSessionHandlerAdapter {
             for(int i=0; i <messageToSend;i++) {
                 RequestMessage requestMessage = requestMessageFactoryBean.getObject();
                 LOG.info("Connection has been established, will send request message {}", requestMessage);
-                session.subscribe(WS_TOPIC, this);
-                session.send(WS_ENDPOINT_PREFIX+SAMPLE_ENDPOINT_MESSAGE_MAPPING, requestMessage);
+                this.subscribeAndSend(session, requestMessage);
             }
         } catch(Exception e) {
             LOG.error("Error while sending data");
         }
 
+    }
+
+    protected void subscribeAndSend(StompSession session, RequestMessage requestMessage) {
+        session.subscribe(WS_TOPIC, this);
+        session.send(WS_ENDPOINT_PREFIX+SAMPLE_ENDPOINT_MESSAGE_MAPPING, requestMessage);
     }
 
     @Override
@@ -60,5 +63,19 @@ public class SessionHandler extends StompSessionHandlerAdapter {
     @Override
     public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload, Throwable exception) {
         super.handleException(session, command, headers, payload, exception);
+    }
+
+    @Component
+    public static class SessionHandlerThatExpectsNoResponse extends SessionHandler {
+
+        protected void subscribeAndSend(StompSession session, RequestMessage requestMessage) {
+            session.subscribe(WS_TOPIC_NO_RESPONSE, this);
+            session.send(WS_ENDPOINT_PREFIX+SAMPLE_ENDPOINT_WITHOUT_RESPONSE_MESSAGE_MAPPING, requestMessage);
+        }
+
+        @Override
+        public Type getPayloadType(StompHeaders headers) {
+            return Void.class;
+        }
     }
 }

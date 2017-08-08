@@ -1,3 +1,4 @@
 server:
   url: ws://localhost:9000/sampleEndpoint
+  url-no-response: ws://localhost:9000/sampleEndpointWithoutResponse
 

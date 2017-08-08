@@ -21,8 +21,10 @@ public class MessageController {
 
     public static final String SAMPLE_ENDPOINT_MESSAGE_MAPPING = "/sampleEndpoint";
 
+    public static final String SAMPLE_ENDPOINT_WITHOUT_RESPONSE_MESSAGE_MAPPING = "/sampleEndpointWithoutResponse";
 
     public static final String WS_TOPIC = WS_TOPIC_DESTINATION_PREFIX+"/messages";
+    public static final String WS_TOPIC_NO_RESPONSE = WS_TOPIC_DESTINATION_PREFIX+"/messagesNoResponse";
 
     @MessageMapping(SAMPLE_ENDPOINT_MESSAGE_MAPPING)
     @SendTo(WS_TOPIC)
@@ -30,6 +32,14 @@ public class MessageController {
         LOG.info("Received new request message {}. Will respond after one second.", message);
         Thread.sleep(1000); // simulated delay
         return new ResponseMessage("Hello", message.getRef());
+    }
+
+    @MessageMapping(SAMPLE_ENDPOINT_WITHOUT_RESPONSE_MESSAGE_MAPPING)
+    @SendTo(WS_TOPIC_NO_RESPONSE)
+    public void processRequestWithoutResponse(RequestMessage message) throws Exception {
+        LOG.info("Received new request without responses message {}. Will respond after one second.", message);
+        Thread.sleep(1000); // simulated delay
+      //  return new ResponseMessage("Hello", message.getRef());
     }
 
 

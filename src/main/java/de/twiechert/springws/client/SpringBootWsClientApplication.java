@@ -1,5 +1,6 @@
 package de.twiechert.springws.client;
 
+import de.twiechert.springws.client.config.SessionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -26,20 +27,30 @@ public class SpringBootWsClientApplication {
 
 
     @Autowired
-    StompSessionHandlerAdapter sessionHandler;
+    SessionHandler sessionHandler;
 
+    @Autowired
+    SessionHandler.SessionHandlerThatExpectsNoResponse sessionHandlerThatExpectsNoResponse;
 
     @Autowired
     WebSocketStompClient stompClient;
 
 
     @Value("${server.url}")
-    private String serverHost;
+    private String urlEndpoint;
+
+
+    @Value("${server.url-no-response}")
+    private String urlEndpointNoResponse;
+
+
 
 
     @Scheduled(fixedDelay=5000)
     public void sendMessageToServer() throws ExecutionException, InterruptedException {
-       stompClient.connect(buildUrl(), sessionHandler);
+       stompClient.connect(urlEndpoint, sessionHandler);
+       stompClient.connect(urlEndpointNoResponse, sessionHandlerThatExpectsNoResponse);
+
     }
 
     public static void main(final String[] args) {
@@ -47,8 +58,6 @@ public class SpringBootWsClientApplication {
         SpringApplication.run(SpringBootWsClientApplication.class, args);
     }
 
-    private String buildUrl() {
-        return serverHost;
-    }
+
 
 }
